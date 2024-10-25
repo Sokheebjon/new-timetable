@@ -1,0 +1,30 @@
+{
+  "loading": "Загрузка...",
+  "table": {
+    "rows_per_page": "Строк на странице",
+    "total_data": "Всего данных"
+  },
+  "datepicker": {
+    "start_date": "Дата начала",
+    "end_date": "Дата окончания"
+  },
+  "button": {
+    "cancel": "Отмена",
+    "apply": "Применить"
+  },
+  "select": {
+    "timetable": "",
+    "audience_occupancy": ""
+  },
+  "notification": {
+    "title": "Инциденты",
+    "no_notifications": "Нет уведомлений",
+    "number_of_incidents": "Количество инцидентов"
+  },
+  "timetable": {
+    "title": "",
+    "day": "",
+    "correspondence": "",
+    "evening": ""
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "loading": "Loading...",
+  "table": {
+    "rows_per_page": "Rows per page",
+    "total_data": "Total data"
+  },
+  "datepicker": {
+    "start_date": "Start date",
+    "end_date": "End date"
+  },
+  "button": {
+    "cancel": "Cancel",
+    "apply": "Apply"
+  },
+  "select": {
+    "timetable": "",
+    "audience_occupancy": ""
+  },
+  "notification": {
+    "title": "Incidents",
+    "no_notifications": "No notifications",
+    "number_of_incidents": "Number of incidents"
+  },
+  "timetable": {
+    "title": "",
+    "day": "",
+    "correspondence": "",
+    "evening": ""
+  }
+}

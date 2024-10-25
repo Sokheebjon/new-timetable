@@ -1,0 +1,30 @@
+{
+  "loading": "Yuklanmoqda...",
+  "table": {
+    "rows_per_page": "Sahifadagi qatorlar",
+    "total_data": "Jami ma'lumotlar"
+  },
+  "datepicker": {
+    "start_date": "Boshlanish sanasi",
+    "end_date": "Tugash sanasi"
+  },
+  "button": {
+    "cancel": "Bekor qilish",
+    "apply": "Qo'llash"
+  },
+  "select": {
+    "timetable": "Dars jadvali",
+    "audience_occupancy": "Auditoriyalar bandligi"
+  },
+  "notification": {
+    "title": "Hodisalar",
+    "no_notifications": "Bildirishnomalar yo'q",
+    "number_of_incidents": "Hodisalar soni"
+  },
+  "timetable": {
+    "title": "Dars jadvali",
+    "day": "Kunduzgi",
+    "correspondence": "Sirtqi",
+    "evening": "Kechki"
+  }
+}
