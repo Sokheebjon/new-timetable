@@ -6,7 +6,7 @@ on:
       - main
 jobs:
   build:
-    runs-on: 'datagaze'
+    runs-on: 'rtu-timetable'
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
@@ -23,5 +23,5 @@ jobs:
         run: npm run build
 
       - name: Deploy
-        run:  cp -a ~/datagaze/actions-runner/_work/datagaze-task/datagaze-task/dist/. /var/www/datagaze.educon.uz/html
+        run:  cp -a ~/rtu-timetable/actions-runner/_work/rtu/rtu/dist/. /var/www/timetable.educon.uz/html
 
