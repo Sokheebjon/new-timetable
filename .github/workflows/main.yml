@@ -23,5 +23,5 @@ jobs:
         run: npm run build
 
       - name: Deploy
-        run:  cp -a ~/rtu-timetable/actions-runner/_work/rtu/rtu/dist/. /var/www/timetable.educon.uz/html
+        run:  cp -a ~/rtu-timetable/actions-runner/_work/new-timetable/new-timetable/dist/. /var/www/timetable.educon.uz/html
 
