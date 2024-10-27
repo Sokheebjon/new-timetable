@@ -14,12 +14,22 @@
   },
   "select": {
     "timetable": "",
-    "audience_occupancy": ""
+    "audience_occupancy": "",
+    "audience": "",
+    "group": ""
   },
   "notification": {
     "title": "Incidents",
     "no_notifications": "No notifications",
     "number_of_incidents": "Number of incidents"
+  },
+  "columns": {
+    "audience": "",
+    "audience_type": "",
+    "class_time": "",
+    "date": "",
+    "classTime": "",
+    "group": ""
   },
   "timetable": {
     "title": "",

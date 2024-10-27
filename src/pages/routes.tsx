@@ -6,6 +6,7 @@ import loadable from "@/utils/loadable.tsx";
 const NotFound = loadable(() => import('./NotFound'));
 const Timetable = loadable(() => import('./timetable.tsx'));
 const Faculties = loadable(() => import('./faculties.tsx'));
+const AudienceOccupancy = loadable(() => import('./audience-occupancy.tsx'));
 
 export const router = createBrowserRouter([
     {
@@ -16,15 +17,19 @@ export const router = createBrowserRouter([
         children: [
             {
                 index: true,
-                element: <Navigate to="/faculties" replace/>,
+                element: <Navigate to="/timetable/faculties" replace/>,
             },
             {
-                path: '/faculties',
+                path: '/timetable/faculties',
                 element: <Faculties/>,
             },
             {
-                path: '/timetable/:faculty',
+                path: '/timetable/faculties/:faculty',
                 element: <Timetable/>  ,
+            },
+            {
+                path: '/audience-occupancy',
+                element: <AudienceOccupancy/>,
             }
         ]
         // errorElement: <Navigate to="/404" replace />,

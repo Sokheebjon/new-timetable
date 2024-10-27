@@ -14,12 +14,22 @@
   },
   "select": {
     "timetable": "Dars jadvali",
-    "audience_occupancy": "Auditoriyalar bandligi"
+    "audience_occupancy": "Auditoriyalar bandligi",
+    "audience": "Auditoriyalar",
+    "group": "Guruhlar"
   },
   "notification": {
     "title": "Hodisalar",
     "no_notifications": "Bildirishnomalar yo'q",
     "number_of_incidents": "Hodisalar soni"
+  },
+  "columns": {
+    "audience": "Auditoriya",
+    "audience_type": "Auditoriya turi",
+    "class_time": "Dars soatlari",
+    "date": "Sana",
+    "classTime": "",
+    "group": "Guruh"
   },
   "timetable": {
     "title": "Dars jadvali",

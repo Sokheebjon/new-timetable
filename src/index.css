@@ -7,14 +7,17 @@
     font-family: "Inter", sans-serif;
 }
 
-#root{
-    height: 100vh;
-    overflow: hidden;
-}
-
 .progress-bar div {
     border-top-right-radius: 5px;
     border-bottom-right-radius: 5px;
+}
+
+.class-schedule th {
+    @apply bg-gray-100;
+}
+
+.class-schedule, .class-schedule td, .class-schedule th {
+    @apply border border-collapse
 }
 
 

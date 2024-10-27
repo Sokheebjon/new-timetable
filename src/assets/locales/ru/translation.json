@@ -14,12 +14,22 @@
   },
   "select": {
     "timetable": "",
-    "audience_occupancy": ""
+    "audience_occupancy": "",
+    "audience": "",
+    "group": ""
   },
   "notification": {
     "title": "Инциденты",
     "no_notifications": "Нет уведомлений",
     "number_of_incidents": "Количество инцидентов"
+  },
+  "columns": {
+    "audience": "",
+    "audience_type": "",
+    "class_time": "",
+    "date": "",
+    "classTime": "",
+    "group": ""
   },
   "timetable": {
     "title": "",
