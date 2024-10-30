@@ -1,227 +1,80 @@
 import {PageHeaderSecondary} from "@/components/ui/PageHeader.tsx";
 import {useTranslation} from "react-i18next";
 import AudienceSchedule, {TColumns, TData} from "@/containers/audience-occupancy/audience-schedule.tsx";
+import {useAudienceOccupancyQuery} from "@/hooks/query/useAudienceOccupancyQuery.ts";
+import {get} from "lodash";
+import {startOfDay} from "date-fns";
+import {useSearchParams} from "react-router-dom";
+import {useLessonPairsQuery} from "@/hooks/query/useLessonPairsQuery.ts";
 
 export default function AudienceOccupancy() {
     const {t} = useTranslation();
+    const [searchParams] = useSearchParams();
+    const date = searchParams.get("date")
+        ? new Date(searchParams.get("date") as string)
+        : new Date().getTime();
+
+    const _building = searchParams.get("building") ?? "";
+
+    const lessonPairsQuery = useLessonPairsQuery({limit: 200});
+    const lessonPairsList = get(lessonPairsQuery, 'data.data.data', []);
+
+    const lessonPairColumns = lessonPairsList.map((lessonPair: {
+        code: string,
+        start_time: string,
+        end_time: string
+    }) => ({
+        Header: lessonPair.start_time + "-" + lessonPair.end_time,
+        accessor: lessonPair.code as keyof TData,
+        className: 'text-center p-0',
+        cell: (data: { occupiedLessons: never[]; }) => {
+            const groupNameByLessonPair = data?.occupiedLessons?.filter((item: {
+                lessonPair: { code: string; };
+            }) => item.lessonPair.code === lessonPair.code);
+            return groupNameByLessonPair.length > 0 && <div className="w-full h-full bg-red-50">
+                {groupNameByLessonPair?.map((item: { group: { name: string, id: string } }) => (
+                    <p key={item.group.id}>
+                        {item.group.name},
+                    </p>
+                ))}
+                <br/>
+            </div>
+        }
+    }));
+
+    // Get the start and end of the week in timestamp (milliseconds)
+    const today = startOfDay(date);
+    const startOfDayTimestamp = Math.floor(Date.UTC(today.getFullYear(), today.getMonth(), today.getDate()) / 1000);
+
+
+    const audienceOccupancyQuery = useAudienceOccupancyQuery({
+        limit: 200,
+        _building,
+        lesson_date_from: startOfDayTimestamp,
+        lesson_date_to: startOfDayTimestamp,
+    });
+    const audienceOccupancyList = get(audienceOccupancyQuery, 'data.data.data', []);
 
     const columns: TColumns<TData>[] = [
         {
             Header: t("columns.audience"),
             className: "w-[100px] text-center bg-gray-100",
             accessor: 'audience',
-            rowSpan: 3
+            cell: (data) => {
+                return data?.name
+            }
         },
         {
             Header: t("columns.audience_type"),
             className: "w-[100px] text-center bg-gray-100",
-            accessor: 'audience_type',
+            cell: (data) => {
+                return data?.auditoriumType?.name
+            }
         },
         {
             Header: t('columns.class_time'),
             className: 'text-center',
-            children: [
-                {
-                    Header: "08:00-09:30",
-                    accessor: 'financial',
-                    className: 'text-center'
-                },
-                {
-                    Header: "09:40-11:10",
-                    accessor: 'initialEducation',
-                    className: 'text-center'
-                },
-                {
-                    Header: "11:20-12:50",
-                    accessor: 'initialEducation_2',
-                    className: 'text-center'
-                },
-                {
-                    Header: "13:00-14:30",
-                    accessor: 'foreignLanguage',
-                    className: 'text-center'
-                },
-                {
-                    Header: "14:40-16:10",
-                    accessor: 'psychology',
-                    className: 'text-center'
-                },
-                {
-                    Header: "16:20-17:50",
-                    accessor: 'psychology',
-                    className: 'text-center'
-                },
-                {
-                    Header: "18:00-19:30",
-                    accessor: 'psychology',
-                    className: 'text-center'
-                },
-            ]
-        },
-    ]
-
-    const dataSource = [
-        {
-            audience: "201",
-            audience_type: "Маъруза хонаси",
-            financial: "Ilk va maktabgacha yoshdagi bolalar pedagogikasi",
-            initialEducation: "Ona tili",
-            initialEducation_2: "Amaliy o‘zbek (rus) tili. Davlat tilida ish yuritish (ECTS 6)",
-            foreignLanguage: "Ingliz tili",
-            psychology: "Psixologiya"
-        },
-        {
-            audience: "201",
-            audience_type: "Маъруза хонаси",
-            financial: "Ilk va maktabgacha yoshdagi bolalar pedagogikasi",
-            initialEducation: "Ona tili",
-            initialEducation_2: "Amaliy o‘zbek (rus) tili. Davlat tilida ish yuritish (ECTS 6)",
-            foreignLanguage: "Ingliz tili",
-            psychology: "Psixologiya"
-        },
-        {
-            audience: "201",
-            audience_type: "Маъруза хонаси",
-            financial: "Ilk va maktabgacha yoshdagi bolalar pedagogikasi",
-            initialEducation: "Ona tili",
-            initialEducation_2: "Amaliy o‘zbek (rus) tili. Davlat tilida ish yuritish (ECTS 6)",
-            foreignLanguage: "Ingliz tili",
-            psychology: "Psixologiya"
-        },
-        {
-            audience: "201",
-            audience_type: "Маъруза хонаси",
-            financial: "Ilk va maktabgacha yoshdagi bolalar pedagogikasi",
-            initialEducation: "Ona tili",
-            initialEducation_2: "Amaliy o‘zbek (rus) tili. Davlat tilida ish yuritish (ECTS 6)",
-            foreignLanguage: "Ingliz tili",
-            psychology: "Psixologiya"
-        },
-        {
-            audience: "201",
-            audience_type: "Маъруза хонаси",
-            financial: "Ilk va maktabgacha yoshdagi bolalar pedagogikasi",
-            initialEducation: "Ona tili",
-            initialEducation_2: "Amaliy o‘zbek (rus) tili. Davlat tilida ish yuritish (ECTS 6)",
-            foreignLanguage: "Ingliz tili",
-            psychology: "Psixologiya"
-        },
-        {
-            audience: "201",
-            audience_type: "Маъруза хонаси",
-            financial: "Ilk va maktabgacha yoshdagi bolalar pedagogikasi",
-            initialEducation: "Ona tili",
-            initialEducation_2: "Amaliy o‘zbek (rus) tili. Davlat tilida ish yuritish (ECTS 6)",
-            foreignLanguage: "Ingliz tili",
-            psychology: "Psixologiya"
-        },
-        {
-            audience: "201",
-            audience_type: "Маъруза хонаси",
-            financial: "Ilk va maktabgacha yoshdagi bolalar pedagogikasi",
-            initialEducation: "Ona tili",
-            initialEducation_2: "Amaliy o‘zbek (rus) tili. Davlat tilida ish yuritish (ECTS 6)",
-            foreignLanguage: "Ingliz tili",
-            psychology: "Psixologiya"
-        },
-        {
-            audience: "201",
-            audience_type: "Маъруза хонаси",
-            financial: "Ilk va maktabgacha yoshdagi bolalar pedagogikasi",
-            initialEducation: "Ona tili",
-            initialEducation_2: "Amaliy o‘zbek (rus) tili. Davlat tilida ish yuritish (ECTS 6)",
-            foreignLanguage: "Ingliz tili",
-            psychology: "Psixologiya"
-        },
-        {
-            audience: "201",
-            audience_type: "Маъруза хонаси",
-            financial: "Ilk va maktabgacha yoshdagi bolalar pedagogikasi",
-            initialEducation: "Ona tili",
-            initialEducation_2: "Amaliy o‘zbek (rus) tili. Davlat tilida ish yuritish (ECTS 6)",
-            foreignLanguage: "Ingliz tili",
-            psychology: "Psixologiya"
-        },
-        {
-            audience: "201",
-            audience_type: "Маъруза хонаси",
-            financial: "Ilk va maktabgacha yoshdagi bolalar pedagogikasi",
-            initialEducation: "Ona tili",
-            initialEducation_2: "Amaliy o‘zbek (rus) tili. Davlat tilida ish yuritish (ECTS 6)",
-            foreignLanguage: "Ingliz tili",
-            psychology: "Psixologiya"
-        },
-        {
-            audience: "201",
-            audience_type: "Маъруза хонаси",
-            financial: "Ilk va maktabgacha yoshdagi bolalar pedagogikasi",
-            initialEducation: "Ona tili",
-            initialEducation_2: "Amaliy o‘zbek (rus) tili. Davlat tilida ish yuritish (ECTS 6)",
-            foreignLanguage: "Ingliz tili",
-            psychology: "Psixologiya"
-        },
-        {
-            audience: "201",
-            audience_type: "Маъруза хонаси",
-            financial: "Ilk va maktabgacha yoshdagi bolalar pedagogikasi",
-            initialEducation: "Ona tili",
-            initialEducation_2: "Amaliy o‘zbek (rus) tili. Davlat tilida ish yuritish (ECTS 6)",
-            foreignLanguage: "Ingliz tili",
-            psychology: "Psixologiya"
-        },
-        {
-            audience: "201",
-            audience_type: "Маъруза хонаси",
-            financial: "Ilk va maktabgacha yoshdagi bolalar pedagogikasi",
-            initialEducation: "Ona tili",
-            initialEducation_2: "Amaliy o‘zbek (rus) tili. Davlat tilida ish yuritish (ECTS 6)",
-            foreignLanguage: "Ingliz tili",
-            psychology: "Psixologiya"
-        },
-        {
-            audience: "201",
-            audience_type: "Маъруза хонаси",
-            financial: "Ilk va maktabgacha yoshdagi bolalar pedagogikasi",
-            initialEducation: "Ona tili",
-            initialEducation_2: "Amaliy o‘zbek (rus) tili. Davlat tilida ish yuritish (ECTS 6)",
-            foreignLanguage: "Ingliz tili",
-            psychology: "Psixologiya"
-        },
-        {
-            audience: "201",
-            audience_type: "Маъруза хонаси",
-            financial: "Ilk va maktabgacha yoshdagi bolalar pedagogikasi",
-            initialEducation: "Ona tili",
-            initialEducation_2: "Amaliy o‘zbek (rus) tili. Davlat tilida ish yuritish (ECTS 6)",
-            foreignLanguage: "Ingliz tili",
-            psychology: "Psixologiya"
-        },
-        {
-            audience: "201",
-            audience_type: "Маъруза хонаси",
-            financial: "Ilk va maktabgacha yoshdagi bolalar pedagogikasi",
-            initialEducation: "Ona tili",
-            initialEducation_2: "Amaliy o‘zbek (rus) tili. Davlat tilida ish yuritish (ECTS 6)",
-            foreignLanguage: "Ingliz tili",
-            psychology: "Psixologiya"
-        },
-        {
-            audience: "201",
-            audience_type: "Маъруза хонаси",
-            financial: "Ilk va maktabgacha yoshdagi bolalar pedagogikasi",
-            initialEducation: "Ona tili",
-            initialEducation_2: "Amaliy o‘zbek (rus) tili. Davlat tilida ish yuritish (ECTS 6)",
-            foreignLanguage: "Ingliz tili",
-            psychology: "Psixologiya"
-        },
-        {
-            audience: "201",
-            audience_type: "Маъруза хонаси",
-            financial: "Ilk va maktabgacha yoshdagi bolalar pedagogikasi",
-            initialEducation: "Ona tili",
-            initialEducation_2: "Amaliy o‘zbek (rus) tili. Davlat tilida ish yuritish (ECTS 6)",
-            foreignLanguage: "Ingliz tili",
-            psychology: "Psixologiya"
+            children: lessonPairColumns
         },
     ]
 
@@ -229,11 +82,11 @@ export default function AudienceOccupancy() {
         <>
             <div className="flex justify-between items-center">
                 <PageHeaderSecondary
-                    className="text-3xl text-indigo-950 font-medium">{t('timetable.title')}</PageHeaderSecondary>
+                    className="text-3xl text-indigo-950 font-medium">{t('audience_occupancy.title')}</PageHeaderSecondary>
             </div>
 
             <div className="my-6">
-                <AudienceSchedule columns={columns} dataSource={dataSource}/>
+                <AudienceSchedule columns={columns} dataSource={audienceOccupancyList}/>
             </div>
         </>
     )

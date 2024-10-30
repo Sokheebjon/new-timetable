@@ -15,6 +15,8 @@ export interface TData {
     initialEducation_2: string
     foreignLanguage: string
     psychology: string;
+    lessonPair?: { start_time: string, end_time: string, code: string }
+    lesson_date?: number;
 }
 
 export interface TColumns<TData> {
@@ -23,6 +25,9 @@ export interface TColumns<TData> {
     className: string
     children?: TChildren<TData>[]
     rowSpan?: number
+    width?: string
+    height?: string
+    cell?: (data: TData, index: number, dataSource: TData[]) => ReactNode | string | number | null
 }
 
 interface ClassScheduleProps {
@@ -31,6 +36,8 @@ interface ClassScheduleProps {
 }
 
 export default function ClassSchedule({columns, dataSource}: ClassScheduleProps) {
+    const date = new Date();
+    const todayInTimestamp = Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()) / 1000;
 
     const flattenColumns: TColumns<TData>[] = columns.reduce((acc, item) => {
         if (item.children) {
@@ -73,18 +80,20 @@ export default function ClassSchedule({columns, dataSource}: ClassScheduleProps)
             </TableHeader>
             <TableBody className="overflow-y-auto">
                 {dataSource.map((data, index) => {
-                    const shouldRenderDateCell = index % 3 === 0; // Render date cell every 3 rows
+                    // const shouldRenderDateCell = index % 3 === 0; // Render date cell every 3 rows
+                    // const initalRowFlattenColumns = flattenColumns[0];
                     return (
-                        <TableRow key={index}>
+                        <TableRow id={String(data?.lesson_date)} className={todayInTimestamp === data?.lesson_date ? "bg-red-50" : ""} key={index}>
                             {/* Only render the date cell every 3 rows */}
-                            {shouldRenderDateCell && (
-                                <TableCell rowSpan={3} className="w-[100px] bg-gray-100">
-                                    {data.date}
-                                </TableCell>
-                            )}
-                            {flattenColumns.slice(1).map((column, indx) => (
-                                <TableCell key={indx} className={column.className}>
-                                    {column.accessor && data[column.accessor as keyof TData]}
+                            {/*{shouldRenderDateCell && (*/}
+                            {/*    <TableCell rowSpan={3} className="w-[100px] bg-gray-100">*/}
+                            {/*        {initalRowFlattenColumns.cell ? flattenColumns?.[0]?.cell?.(data, index) : data?.[initalRowFlattenColumns.accessor as keyof TData]}*/}
+                            {/*    </TableCell>*/}
+                            {/*)}*/}
+                            {flattenColumns.map((column, indx) => (
+                                <TableCell style={{width: column.width, height: column.height}} key={indx}
+                                           className={column.className}>
+                                    {column.cell ? column.cell(data, index, dataSource) : data[column.accessor as keyof TData]}
                                 </TableCell>
                             ))}
                         </TableRow>

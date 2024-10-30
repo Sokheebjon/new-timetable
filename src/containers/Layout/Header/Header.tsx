@@ -3,7 +3,7 @@ import {
     Select,
     SelectContent,
     SelectGroup,
-    SelectItem, SelectLabel,
+    SelectItem,
     SelectTrigger,
     SelectValue
 } from "@/components/ui/select"
@@ -11,8 +11,11 @@ import {Phone} from "lucide-react"
 import logo from "@/assets/images/logo.svg"
 import {DatePicker} from "@/components/ui/date-picker.tsx";
 import {useTranslation} from "react-i18next";
-import {useLocation, useNavigate} from "react-router-dom";
+import {Link, useLocation, useNavigate, useSearchParams} from "react-router-dom";
 import {DEFAULT_LANGUAGE} from "@/utils/constants.ts";
+import {format} from "date-fns";
+import {useBuildingsQuery} from "@/hooks/query/useBuildingsQuery.ts";
+import {get} from "lodash";
 
 export default function Header() {
     const {t, i18n} = useTranslation();
@@ -20,11 +23,25 @@ export default function Header() {
     const navigate = useNavigate();
     const {pathname} = useLocation();
     const [uiValue, setUiValue] = useState<string>();
+    const [searchParams, setSearchParams] = useSearchParams();
+    const currentSearchParams = Object.fromEntries([...searchParams]);
+    const defaultDate = searchParams.get("date") ? new Date(searchParams.get("date") as string) : new Date();
+    const defaultBuilding = searchParams.get("building") ?? ""
+
+    const buildingsQuery = useBuildingsQuery({limit: 200}, {staleTime: 600000})
+    const buildingsList = get(buildingsQuery, "data.data.data", [])
+    const buildingsOptions = useMemo(() => buildingsList.map((building: { name: string, id: string }) => ({
+        label: building.name,
+        value: String(building.id)
+    })), [buildingsList])
+
+    console.log(defaultBuilding, "defaultBuilding")
+
 
     const selectOptions = useMemo(() => [
         {
             label: t('select.timetable'),
-            value: "/timetable/faculties"
+            value: "/timetable"
         },
         {
             label: t('select.audience_occupancy'),
@@ -45,47 +62,15 @@ export default function Header() {
         i18n.changeLanguage(value)
     }, [i18n])
 
-    const groupOptions = useMemo(() => [
-        {
-            label: "B-120",
-            value: "B-120"
-        },
-        {
-            label: "B-120",
-            value: "B-120"
-        },
-        {
-            label: "B-120",
-            value: "B-120"
-        },
-        {
-            label: "B-120",
-            value: "B-120"
-        },
-        {
-            label: "B-120",
-            value: "B-120"
-        },
-        {
-            label: "B-120",
-            value: "B-120"
-        },
-        {
-            label: "B-120",
-            value: "B-120"
-        },
-    ], [t])
-
-    const audienceOptions = useMemo(() => [
-        {
-            label: "A bino / Qurilish ko‘chasi 31",
-            value: "block-a"
-        },
-        {
-            label: "B bino / Lufiy ko‘chasi 47",
-            value: "block-b"
+    const handleDateChange = useCallback((value?: Date) => {
+        if (value) {
+            const date = format((value), "yyyy-MM-dd")
+            setSearchParams({...currentSearchParams, date})
         }
-    ], [])
+    }, [])
+
+    // const groupsQuery = useGroupsQuery({ limit: 200 })
+    // const groupsList = get(groupsQuery, "data.data.data.data.items", [])
 
     const handleChangeUi = useCallback((value: string) => {
         navigate(value);
@@ -93,7 +78,7 @@ export default function Header() {
     }, [])
 
     const handleChangeGroups = useCallback((value: string) => {
-        console.log(value)
+        setSearchParams({...currentSearchParams, building: value})
     }, [])
 
 
@@ -122,24 +107,27 @@ export default function Header() {
             <div className="border-t border-gray-200">
                 <div className="px-16">
                     <div className="flex justify-between items-center py-4">
-                        <div className="flex items-center space-x-4">
-                            <img src={logo} alt="RENESSANS TA'LIM UNIVERSITETI" width={60} height={60}/>
-                            <div>
-                                <h1 className="text-xl font-bold text-indigo-950">RENESSANS TA'LIM <br/> UNIVERSITETI
-                                </h1>
+                        <Link to="/">
+                            <div className="flex items-center space-x-4">
+                                <img src={logo} alt="RENESSANS TA'LIM UNIVERSITETI" width={60} height={60}/>
+                                <div>
+                                    <h1 className="text-xl font-bold text-indigo-950">RENESSANS
+                                        TA'LIM <br/> UNIVERSITETI</h1>
+                                </div>
                             </div>
-                        </div>
+                        </Link>
                         <div>
                             {pathname.startsWith("/audience-occupancy") && (
                                 <Select
                                     onValueChange={handleChangeGroups}
+                                    defaultValue={defaultBuilding}
                                 >
                                     <SelectTrigger className="w-[420px]">
                                         <SelectValue placeholder={t("select.audience")}/>
                                     </SelectTrigger>
                                     <SelectContent>
                                         <SelectGroup>
-                                            {audienceOptions.map((option) => (
+                                            {buildingsOptions.map((option) => (
                                                 <SelectItem key={option.value} value={option.value}>
                                                     {option.label}
                                                 </SelectItem>
@@ -148,29 +136,29 @@ export default function Header() {
                                     </SelectContent>
                                 </Select>
                             )}
-                            {pathname.startsWith("/timetable") && (
-                                <Select
-                                    onValueChange={handleChangeGroups}
-                                >
-                                    <SelectTrigger className="w-[420px]">
-                                        <SelectValue placeholder={t("select.group")}/>
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectGroup>
-                                            <SelectLabel>Matematika</SelectLabel>
-                                            {groupOptions.map((option) => (
-                                                <SelectItem key={option.value} value={option.value}>
-                                                    {option.label}
-                                                </SelectItem>
-                                            ))}
-                                        </SelectGroup>
-                                    </SelectContent>
-                                </Select>
-                            )}
+                            {/*{pathname.startsWith("/timetable") && (*/}
+                            {/*    <Select*/}
+                            {/*        onValueChange={handleChangeGroups}*/}
+                            {/*    >*/}
+                            {/*        <SelectTrigger className="w-[420px]">*/}
+                            {/*            <SelectValue placeholder={t("select.group")}/>*/}
+                            {/*        </SelectTrigger>*/}
+                            {/*        <SelectContent>*/}
+                            {/*            <SelectGroup>*/}
+                            {/*                <SelectLabel>Matematika</SelectLabel>*/}
+                            {/*                {groupOptions.map((option) => (*/}
+                            {/*                    <SelectItem key={option.value} value={option.value}>*/}
+                            {/*                        {option.label}*/}
+                            {/*                    </SelectItem>*/}
+                            {/*                ))}*/}
+                            {/*            </SelectGroup>*/}
+                            {/*        </SelectContent>*/}
+                            {/*    </Select>*/}
+                            {/*)}*/}
                         </div>
                         <nav>
                             <div className="flex space-x-6 text-sm font-medium">
-                                <DatePicker defaultValue={new Date()}/>
+                                <DatePicker onChange={handleDateChange} defaultValue={defaultDate}/>
                                 <Select
                                     value={uiValue}
                                     onValueChange={handleChangeUi}

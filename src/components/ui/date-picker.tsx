@@ -16,13 +16,25 @@ import {
 interface TDatePickerProps {
     defaultValue?: Date
     className?: string
+    onChange?: (value?: Date) => void
 }
 
-export function DatePicker({defaultValue, className}:TDatePickerProps ) {
+export function DatePicker({defaultValue, className, onChange}:TDatePickerProps ) {
     const [date, setDate] = React.useState<Date | undefined>(defaultValue)
+    const [open, setOpen] = React.useState(false)
+
+    const onSelect = (value?: Date)=> {
+        setDate(value)
+        if (onChange){
+            onChange(value)
+        }
+        setOpen(false)
+    }
+
+    const handleOpenChange = (open: boolean) => setOpen(open)
 
     return (
-        <Popover>
+        <Popover open={open} onOpenChange={handleOpenChange}>
             <PopoverTrigger asChild>
                 <Button
                     variant={"outline"}
@@ -42,7 +54,7 @@ export function DatePicker({defaultValue, className}:TDatePickerProps ) {
                 <Calendar
                     mode="single"
                     selected={date}
-                    onSelect={setDate}
+                    onSelect={onSelect}
                     initialFocus
                 />
             </PopoverContent>

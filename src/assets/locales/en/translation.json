@@ -15,8 +15,7 @@
   "select": {
     "timetable": "",
     "audience_occupancy": "",
-    "audience": "",
-    "group": ""
+    "audience": ""
   },
   "notification": {
     "title": "Incidents",
@@ -28,8 +27,10 @@
     "audience_type": "",
     "class_time": "",
     "date": "",
-    "classTime": "",
     "group": ""
+  },
+  "audience_occupancy": {
+    "title": ""
   },
   "timetable": {
     "title": "",

@@ -1,5 +1,6 @@
 import {ReactNode} from "react";
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table.tsx";
+import {useTranslation} from "react-i18next";
 
 export interface TChildren<TChildData> {
     Header: string | ReactNode
@@ -8,8 +9,12 @@ export interface TChildren<TChildData> {
 }
 
 export interface TData {
+    name: string
     audience?: string
-    audience_type?: string
+    auditoriumType?: {
+        name: string
+        code: string
+    }
     financial: string
     initialEducation: string
     initialEducation_2: string
@@ -23,15 +28,17 @@ export interface TColumns<TData> {
     className: string
     children?: TChildren<TData>[]
     rowSpan?: number
+    cell?: (data: TData, index: number) => ReactNode | string | number | null
 }
 
 interface ClassScheduleProps {
     columns: TColumns<TData>[]
     dataSource: TData[]
+    loading?: boolean
 }
 
-export default function AudienceSchedule({columns, dataSource}: ClassScheduleProps) {
-
+export default function AudienceSchedule({columns, dataSource, loading}: ClassScheduleProps) {
+    const {t} = useTranslation();
     const flattenColumns: TColumns<TData>[] = columns.reduce((acc, item) => {
         if (item.children) {
             return [...acc, ...item.children]
@@ -58,31 +65,37 @@ export default function AudienceSchedule({columns, dataSource}: ClassSchedulePro
                     }
                 </TableRow>
                 <TableRow>
-                    {
-                        columns.map((column) => {
-                            return column.children?.map((childCol, index) => {
-                                return (
-                                    <TableHead key={index} className={childCol.className}>
-                                        {childCol.Header}
-                                    </TableHead>
-                                )
-                            })
+                    {columns.map((column) => {
+                        return column.children?.map((childCol, index) => {
+                            return (
+                                <TableHead key={index} className={childCol.className}>
+                                    {childCol.Header}
+                                </TableHead>
+                            )
                         })
-                    }
+                    })}
                 </TableRow>
             </TableHeader>
             <TableBody className="overflow-y-auto">
-                {dataSource.map((data, index) => {
-                    return (
-                        <TableRow key={index}>
-                            {flattenColumns.map((column, indx) => (
-                                <TableCell key={indx} className={column.className}>
-                                    {column.accessor && data[column.accessor as keyof TData]}
-                                </TableCell>
-                            ))}
+                {
+                    loading ? (
+                        <TableRow>
+                            <TableCell colSpan={flattenColumns.length} className="text-center">
+                                {t('loading')}
+                            </TableCell>
                         </TableRow>
-                    );
-                })}
+                    ) : dataSource.map((data, index) => {
+                        return (
+                            <TableRow key={index}>
+                                {flattenColumns.map((column, indx) => (
+                                    <TableCell key={indx} className={column.className}>
+                                        {column.cell ? column.cell(data, index) : data[column.accessor as keyof TData]}
+                                    </TableCell>
+                                ))}
+                            </TableRow>
+                        );
+                    })
+                }
             </TableBody>
         </Table>
     )

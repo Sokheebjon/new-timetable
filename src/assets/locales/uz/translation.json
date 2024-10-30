@@ -15,8 +15,7 @@
   "select": {
     "timetable": "Dars jadvali",
     "audience_occupancy": "Auditoriyalar bandligi",
-    "audience": "Auditoriyalar",
-    "group": "Guruhlar"
+    "audience": "Auditoriyalar"
   },
   "notification": {
     "title": "Hodisalar",
@@ -28,8 +27,10 @@
     "audience_type": "Auditoriya turi",
     "class_time": "Dars soatlari",
     "date": "Sana",
-    "classTime": "",
     "group": "Guruh"
+  },
+  "audience_occupancy": {
+    "title": "Auditoriyalar bandligi"
   },
   "timetable": {
     "title": "Dars jadvali",
