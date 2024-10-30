@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import {useState} from "react";
 import {PageHeaderSecondary} from "@/components/ui/PageHeader.tsx";
 import {useTranslation} from "react-i18next";
 import EducationFormTabs from "@/containers/timetable/education-form-tabs.tsx";
@@ -14,6 +14,7 @@ import {uz} from "date-fns/locale";
 import {useCoursesQuery} from "@/hooks/query/useCoursesQuery.ts";
 import {Badge} from "@/components/ui/badge.tsx";
 
+/* eslint-disable  @typescript-eslint/no-explicit-any */
 export default function Timetable() {
     const {t} = useTranslation();
     const [facultyId, setFacultyId] = useState<string | number | null>(null)
@@ -96,7 +97,7 @@ export default function Timetable() {
     const columns: TColumns<TData>[] = [
         {
             Header: t("columns.date"),
-            className: "w-[100px]",
+            className: "w-[100px] text-center bg-gray-100",
             accessor: 'date',
             rowSpan: 3,
             cell: (record, index, data) => {

@@ -93,7 +93,7 @@ export default function ClassSchedule({columns, dataSource}: ClassScheduleProps)
                             {flattenColumns.map((column, indx) => (
                                 <TableCell style={{width: column.width, height: column.height}} key={indx}
                                            className={column.className}>
-                                    {column.cell ? column.cell(data, index, dataSource) : data[column.accessor as keyof TData]}
+                                    {column.cell ? column.cell(data, index, dataSource) as any : data[column.accessor as keyof TData]}
                                 </TableCell>
                             ))}
                         </TableRow>
