@@ -1,7 +1,6 @@
 import {useState} from "react";
 import {PageHeaderSecondary} from "@/components/ui/PageHeader.tsx";
 import {useTranslation} from "react-i18next";
-import EducationFormTabs from "@/containers/timetable/education-form-tabs.tsx";
 import CourseSelectionCheckbox from "@/containers/timetable/course-selection-checkbox.tsx";
 import ClassSchedule, {TColumns, TData} from "@/containers/timetable/class-schedule.tsx";
 import {Button} from "@/components/ui/button.tsx";
@@ -13,11 +12,15 @@ import {useSearchParams} from "react-router-dom";
 import {uz} from "date-fns/locale";
 import {useCoursesQuery} from "@/hooks/query/useCoursesQuery.ts";
 import {Badge} from "@/components/ui/badge.tsx";
+import {useGroupsQuery} from "@/hooks/query/useGroupsQuery.ts";
+import {useSpecialityListQuery} from "@/hooks/query/useSpecialityListQuery.ts";
+import Select from "@/components/Select";
 
 /* eslint-disable  @typescript-eslint/no-explicit-any */
 export default function Timetable() {
     const {t} = useTranslation();
-    const [facultyId, setFacultyId] = useState<string | number | null>(null)
+    const [facultyId, setFacultyId] = useState<string | number | null>(null);
+    const [specialityId, setSpecialityId] = useState<string | number | null>(null);
     const [educationForm, setEducationForm] = useState<string | number>(11)
     const [searchParams] = useSearchParams();
     const date = searchParams.get("date")
@@ -35,27 +38,51 @@ export default function Timetable() {
 
     const [semesterCodes, setSemesterCodes] = useState<string[]>([])
 
+    const groupQuery = useGroupsQuery({
+        limit: 200,
+        _specialty: specialityId,
+        _education_form: educationForm,
+        _department: facultyId
+    }, {
+        enabled: !!specialityId
+    })
+    const groupList = get(groupQuery, "data.data.data.data.items", []);
+
+    const groupIds = groupList.map((group: { id: string }) => group.id)
+
     const timetableQuery = useTimetableQuery({
         limit: 200,
         _educationForm: educationForm,
-        _department: facultyId,
+        _faculty: facultyId,
         lesson_date_from: startOfWeekTimestamp,
         lesson_date_to: endOfWeekTimestamp,
-        _semester: semesterCodes
-    }, {enabled: facultiesQuery.isSuccess})
-    const timetableList = get(timetableQuery, "data.data.data", [])
+        _semester: semesterCodes,
+        _group: groupIds
+    }, {
+        enabled: !!facultyId && !!groupIds.length
+    });
 
-    const groupsList = timetableList.reduce((acc, item: any) => {
-        const hasThisGroupIncluded = acc.some((group: { id: string }) => group.id === item.group.id)
-        if (hasThisGroupIncluded) {
-            return acc
-        } else {
-            acc.push({...item.group} as never)
-        }
-        return acc
-    }, [])
+    const timetableList = get(timetableQuery, "data.data.data", []);
+    const specialityQuery = useSpecialityListQuery({limit: 200, _department: facultyId});
 
-    const groupChildren = groupsList.map((group: {
+    const specialityList = get(specialityQuery, "data.data.data.data.items", []);
+
+    const specialityOptions = specialityList.map((speciality: { name: string, id: string }) => ({
+        label: speciality.name,
+        value: speciality.id
+    }));
+
+    // const groupsList = timetableList.reduce((acc, item: any) => {
+    //     const hasThisGroupIncluded = acc.some((group: { id: string }) => group.id === item.group.id)
+    //     if (hasThisGroupIncluded) {
+    //         return acc
+    //     } else {
+    //         acc.push({...item.group} as never)
+    //     }
+    //     return acc
+    // }, [])
+
+    const groupChildren = groupList.map((group: {
         name: string,
         id: string,
         specialty: { name: string, id: string }
@@ -119,7 +146,7 @@ export default function Timetable() {
             className: "w-[170px] text-center bg-gray-100",
             accessor: 'classTime',
             cell: (data) => {
-                return <div className="w-[80px]">
+                return <div className="w-full">
                     {data?.lessonPair?.start_time + "-" + data?.lessonPair?.end_time}
                 </div>
             }
@@ -131,7 +158,7 @@ export default function Timetable() {
         },
     ]
 
-    const coursesQuery = useCoursesQuery()
+    const coursesQuery = useCoursesQuery({}, {staleTime: 600000})
     const coursesList = get(coursesQuery, "data.data.data", []);
     const coursesOptions = coursesList.map((course: { level: { name: string }, codes: string[] }) => ({
         label: course.level.name,
@@ -199,6 +226,10 @@ export default function Timetable() {
         setFacultyId(value)
     }
 
+    const handleChangeSpecialities = (value: string) => {
+        setSpecialityId(value)
+    }
+
     const handleChangeEducationForm = (value: string) => {
         setEducationForm(value)
     }
@@ -213,15 +244,28 @@ export default function Timetable() {
                 <PageHeaderSecondary
                     className="text-3xl text-indigo-950 font-medium">{t('timetable.title')}
                 </PageHeaderSecondary>
-                {facultiesOptions.length > 0 &&
-                    <EducationFormTabs
-                        onChange={handleChangeFaculties}
-                        tabList={facultiesOptions}
-                        defaultValue={facultiesOptions[0]?.value}
-                    />
-                }
-                <EducationFormTabs onChange={handleChangeEducationForm} tabList={tabList}
-                                   defaultValue={tabList[0].value}/>
+                <Select
+                    className="w-[200px]"
+                    options={facultiesOptions}
+                    onValueChange={handleChangeFaculties}
+                    placeholder={t("timetable.faculties")}
+                />
+                <Select
+                    className="w-[200px]"
+                    contentClassName="w-[300px]"
+                    options={specialityOptions}
+                    disabled={!facultyId}
+                    onValueChange={handleChangeSpecialities}
+                    placeholder={t("timetable.specialities")}
+                />
+                <Select
+                    className="w-[200px]"
+                    contentClassName="w-[300px]"
+                    options={tabList}
+                    disabled={!facultyId}
+                    onValueChange={handleChangeEducationForm}
+                    placeholder={t("timetable.education_form")}
+                />
                 <CourseSelectionCheckbox
                     onValueChange={handleValueChange}
                     courseList={coursesOptions}

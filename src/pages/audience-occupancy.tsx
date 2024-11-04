@@ -5,7 +5,7 @@ import {useAudienceOccupancyQuery} from "@/hooks/query/useAudienceOccupancyQuery
 import {get} from "lodash";
 import {startOfDay} from "date-fns";
 import {useSearchParams} from "react-router-dom";
-import {useLessonPairsQuery} from "@/hooks/query/useLessonPairsQuery.ts";
+import {useTimetableQuery} from "@/hooks/query/useTimetableQuery.ts";
 
 export default function AudienceOccupancy() {
     const {t} = useTranslation();
@@ -16,10 +16,36 @@ export default function AudienceOccupancy() {
 
     const _building = searchParams.get("building") ?? "";
 
-    const lessonPairsQuery = useLessonPairsQuery({limit: 200});
-    const lessonPairsList = get(lessonPairsQuery, 'data.data.data', []);
+    // Get the start and end of the week in timestamp (milliseconds)
+    const today = startOfDay(date);
+    const startOfDayTimestamp = Math.floor(Date.UTC(today.getFullYear(), today.getMonth(), today.getDate()) / 1000);
 
-    const lessonPairColumns = lessonPairsList.map((lessonPair: {
+    const timetableQuery = useTimetableQuery({
+        limit: 200,
+        lesson_date_from: startOfDayTimestamp,
+        lesson_date_to: startOfDayTimestamp,
+    });
+
+    const lessonPairsList = get(timetableQuery, 'data.data.data', []).reduce(
+        (acc: any, item: any) => {
+            const hasPairIncluded = acc.some(
+                (pair: { code: string | number }) =>
+                    pair?.code === item.lessonPair?.code,
+            );
+            if (hasPairIncluded) {
+                return acc;
+            } else {
+                acc.push({ ...item.lessonPair });
+            }
+            return acc;
+        },
+        [],
+    );
+    const sortedLessonPairsList = lessonPairsList.sort(
+        (a: { code: number }, b: { code: number }) => a.code - b.code,
+    );
+
+    const lessonPairColumns = sortedLessonPairsList.map((lessonPair: {
         code: string,
         start_time: string,
         end_time: string
@@ -41,10 +67,6 @@ export default function AudienceOccupancy() {
             </div>
         }
     }));
-
-    // Get the start and end of the week in timestamp (milliseconds)
-    const today = startOfDay(date);
-    const startOfDayTimestamp = Math.floor(Date.UTC(today.getFullYear(), today.getMonth(), today.getDate()) / 1000);
 
 
     const audienceOccupancyQuery = useAudienceOccupancyQuery({

@@ -1,5 +1,6 @@
 import {ReactNode} from "react";
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table.tsx";
+import {useTranslation} from "react-i18next";
 
 export interface TChildren<TChildData> {
     Header: string | ReactNode
@@ -37,6 +38,7 @@ interface ClassScheduleProps {
 
 export default function ClassSchedule({columns, dataSource}: ClassScheduleProps) {
     const date = new Date();
+    const {t} = useTranslation()
     const todayInTimestamp = Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()) / 1000;
 
     const flattenColumns: TColumns<TData>[] = columns.reduce((acc, item) => {
@@ -78,7 +80,12 @@ export default function ClassSchedule({columns, dataSource}: ClassScheduleProps)
                     }
                 </TableRow>
             </TableHeader>
-            <TableBody className="overflow-y-auto">
+            <TableBody className="overflow-y-auto min-h-80">
+                {dataSource.length === 0 && (
+                    <TableRow className="h-72">
+                        <TableCell colSpan={flattenColumns.length+1} className="text-center">{t('timetable.no_data')}</TableCell>
+                    </TableRow>
+                )}
                 {dataSource.map((data, index) => {
                     // const shouldRenderDateCell = index % 3 === 0; // Render date cell every 3 rows
                     // const initalRowFlattenColumns = flattenColumns[0];
