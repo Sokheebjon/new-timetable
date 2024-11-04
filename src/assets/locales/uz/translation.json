@@ -22,6 +22,16 @@
     "no_notifications": "Bildirishnomalar yo'q",
     "number_of_incidents": "Hodisalar soni"
   },
+  "timetable": {
+    "no_data": "Dars jadvalingiz ko'rinishi uchun filterlerni sozlang",
+    "title": "Dars jadvali",
+    "day": "Kunduzgi",
+    "correspondence": "Sirtqi",
+    "evening": "Kechki",
+    "faculties": "Fakultetlar",
+    "specialities": "Mutaxassisliklar",
+    "education_form": "Ta'lim shakli"
+  },
   "columns": {
     "audience": "Auditoriya",
     "audience_type": "Auditoriya turi",
@@ -31,11 +41,5 @@
   },
   "audience_occupancy": {
     "title": "Auditoriyalar bandligi"
-  },
-  "timetable": {
-    "title": "Dars jadvali",
-    "day": "Kunduzgi",
-    "correspondence": "Sirtqi",
-    "evening": "Kechki"
   }
 }

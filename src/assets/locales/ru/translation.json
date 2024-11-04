@@ -22,6 +22,16 @@
     "no_notifications": "Нет уведомлений",
     "number_of_incidents": "Количество инцидентов"
   },
+  "timetable": {
+    "no_data": "",
+    "title": "",
+    "day": "",
+    "correspondence": "",
+    "evening": "",
+    "faculties": "",
+    "specialities": "",
+    "education_form": ""
+  },
   "columns": {
     "audience": "",
     "audience_type": "",
@@ -31,11 +41,5 @@
   },
   "audience_occupancy": {
     "title": ""
-  },
-  "timetable": {
-    "title": "",
-    "day": "",
-    "correspondence": "",
-    "evening": ""
   }
 }
