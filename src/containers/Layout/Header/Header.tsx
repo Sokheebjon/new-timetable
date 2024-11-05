@@ -3,7 +3,7 @@ import {
     Select,
     SelectContent,
     SelectGroup,
-    SelectItem,
+    SelectItem, SelectLabel,
     SelectTrigger,
     SelectValue
 } from "@/components/ui/select"
@@ -16,6 +16,8 @@ import {DEFAULT_LANGUAGE} from "@/utils/constants.ts";
 import {format} from "date-fns";
 import {useBuildingsQuery} from "@/hooks/query/useBuildingsQuery.ts";
 import {get} from "lodash";
+import {useGroupsQuery} from "@/hooks/query/useGroupsQuery.ts";
+import {SearchSelect} from "@/components/ui/search-select.tsx";
 
 export default function Header() {
     const {t, i18n} = useTranslation();
@@ -24,6 +26,7 @@ export default function Header() {
     const {pathname} = useLocation();
     const [uiValue, setUiValue] = useState<string>();
     const [searchParams, setSearchParams] = useSearchParams();
+    const [searchSelectValue, setSearchSelectValue] = useState<string>("")
     const currentSearchParams = Object.fromEntries([...searchParams]);
     const defaultDate = searchParams.get("date") ? new Date(searchParams.get("date") as string) : new Date();
     const defaultBuilding = searchParams.get("building") ?? ""
@@ -34,8 +37,6 @@ export default function Header() {
         label: building.name,
         value: String(building.id)
     })), [buildingsList])
-
-    console.log(defaultBuilding, "defaultBuilding")
 
 
     const selectOptions = useMemo(() => [
@@ -69,8 +70,35 @@ export default function Header() {
         }
     }, [])
 
-    // const groupsQuery = useGroupsQuery({ limit: 200 })
-    // const groupsList = get(groupsQuery, "data.data.data.data.items", [])
+    const groupsQuery = useGroupsQuery({limit: 200})
+    const groupsList = get(groupsQuery, "data.data.data.data.items", [])
+    const groupOptions = useMemo(() => groupsList.reduce((acc: any, item: any) => {
+        const isDepartmentIncluded = acc.some((group: {
+            department: { id: string; };
+        }) => group?.department?.id === item.department.id);
+
+        if (isDepartmentIncluded) {
+            acc.push({
+                label: item.name,
+                value: item.id,
+                departmentId: item.department.id
+            })
+        } else {
+            acc.push({
+                label: item.name,
+                value: item.id,
+                department: item.department,
+                departmentId: item.department.id
+            })
+        }
+        return acc
+
+    }, []), [groupsList])
+
+    const sortedGroupOptions = useMemo(() => groupOptions.sort((a: { departmentId: number; }, b: {
+        departmentId: number;
+    }) => b?.departmentId - a?.departmentId), [groupOptions])
+
 
     const handleChangeUi = useCallback((value: string) => {
         navigate(value);
@@ -79,6 +107,11 @@ export default function Header() {
 
     const handleChangeGroups = useCallback((value: string) => {
         setSearchParams({...currentSearchParams, building: value})
+    }, [])
+
+    const handleSearchSelect = useCallback((value: string) => {
+        setSearchSelectValue(value)
+        navigate(`/timetable/${value}`);
     }, [])
 
 
@@ -136,25 +169,15 @@ export default function Header() {
                                     </SelectContent>
                                 </Select>
                             )}
-                            {/*{pathname.startsWith("/timetable") && (*/}
-                            {/*    <Select*/}
-                            {/*        onValueChange={handleChangeGroups}*/}
-                            {/*    >*/}
-                            {/*        <SelectTrigger className="w-[420px]">*/}
-                            {/*            <SelectValue placeholder={t("select.group")}/>*/}
-                            {/*        </SelectTrigger>*/}
-                            {/*        <SelectContent>*/}
-                            {/*            <SelectGroup>*/}
-                            {/*                <SelectLabel>Matematika</SelectLabel>*/}
-                            {/*                {groupOptions.map((option) => (*/}
-                            {/*                    <SelectItem key={option.value} value={option.value}>*/}
-                            {/*                        {option.label}*/}
-                            {/*                    </SelectItem>*/}
-                            {/*                ))}*/}
-                            {/*            </SelectGroup>*/}
-                            {/*        </SelectContent>*/}
-                            {/*    </Select>*/}
-                            {/*)}*/}
+                            {pathname.startsWith("/timetable") && (
+                                <SearchSelect
+                                    options={sortedGroupOptions}
+                                    handleSelect={handleSearchSelect}
+                                    value={searchSelectValue}
+                                    placeholder={t('select.placeholder.group')}
+                                    renderLabelTitle={(option) => option.department?.name}
+                                />
+                            )}
                         </div>
                         <nav>
                             <div className="flex space-x-6 text-sm font-medium">

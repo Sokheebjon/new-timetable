@@ -13,9 +13,13 @@
     "apply": "Qo'llash"
   },
   "select": {
+    "no_data": "Ma'lumot topilmadi",
     "timetable": "Dars jadvali",
     "audience_occupancy": "Auditoriyalar bandligi",
-    "audience": "Auditoriyalar"
+    "audience": "Auditoriyalar",
+    "placeholder": {
+      "group": "Guruhni tanlang"
+    }
   },
   "notification": {
     "title": "Hodisalar",
@@ -23,14 +27,11 @@
     "number_of_incidents": "Hodisalar soni"
   },
   "timetable": {
-    "no_data": "Dars jadvalingiz ko'rinishi uchun filterlerni sozlang",
+    "no_data": "Dars jadvali topilmadi",
     "title": "Dars jadvali",
     "day": "Kunduzgi",
     "correspondence": "Sirtqi",
-    "evening": "Kechki",
-    "faculties": "Fakultetlar",
-    "specialities": "Mutaxassisliklar",
-    "education_form": "Ta'lim shakli"
+    "evening": "Kechki"
   },
   "columns": {
     "audience": "Auditoriya",

@@ -13,33 +13,34 @@
     "apply": "Применить"
   },
   "select": {
-    "timetable": "",
-    "audience_occupancy": "",
-    "audience": ""
+    "no_data": "Нет данных",
+    "timetable": "Расписание",
+    "audience_occupancy": "Занятость аудиторий",
+    "audience": "Аудитории",
+    "placeholder": {
+      "group": "Выберите группу"
+    }
   },
   "notification": {
-    "title": "Инциденты",
-    "no_notifications": "Нет уведомлений",
-    "number_of_incidents": "Количество инцидентов"
+    "title": "Уведомления",
+    "no_notifications": "Уведомлений нет",
+    "number_of_incidents": "Количество событий"
   },
   "timetable": {
-    "no_data": "",
-    "title": "",
-    "day": "",
-    "correspondence": "",
-    "evening": "",
-    "faculties": "",
-    "specialities": "",
-    "education_form": ""
+    "no_data": "Расписание не найдено",
+    "title": "Расписание",
+    "day": "Дневное",
+    "correspondence": "Заочное",
+    "evening": "Вечернее"
   },
   "columns": {
-    "audience": "",
-    "audience_type": "",
-    "class_time": "",
-    "date": "",
-    "group": ""
+    "audience": "Аудитория",
+    "audience_type": "Тип аудитории",
+    "class_time": "Время занятия",
+    "date": "Дата",
+    "group": "Группа"
   },
   "audience_occupancy": {
-    "title": ""
+    "title": "Занятость аудиторий"
   }
 }

@@ -34,9 +34,10 @@ export interface TColumns<TData> {
 interface ClassScheduleProps {
     columns: TColumns<TData>[]
     dataSource: TData[]
+    loading?: boolean
 }
 
-export default function ClassSchedule({columns, dataSource}: ClassScheduleProps) {
+export default function ClassSchedule({columns, dataSource, loading}: ClassScheduleProps) {
     const date = new Date();
     const {t} = useTranslation()
     const todayInTimestamp = Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()) / 1000;
@@ -81,6 +82,11 @@ export default function ClassSchedule({columns, dataSource}: ClassScheduleProps)
                 </TableRow>
             </TableHeader>
             <TableBody className="overflow-y-auto min-h-80">
+                {loading && (
+                    <TableRow className="h-72">
+                        <TableCell colSpan={flattenColumns.length+1} className="text-center">{t('loading')}</TableCell>
+                    </TableRow>
+                )}
                 {dataSource.length === 0 && (
                     <TableRow className="h-72">
                         <TableCell colSpan={flattenColumns.length+1} className="text-center">{t('timetable.no_data')}</TableCell>

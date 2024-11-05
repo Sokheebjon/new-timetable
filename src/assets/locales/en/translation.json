@@ -13,33 +13,34 @@
     "apply": "Apply"
   },
   "select": {
-    "timetable": "",
-    "audience_occupancy": "",
-    "audience": ""
+    "no_data": "No data",
+    "timetable": "Timetable",
+    "audience_occupancy": "Audience occupancy",
+    "audience": "Audience",
+    "placeholder": {
+      "group": "Select group"
+    }
   },
   "notification": {
-    "title": "Incidents",
+    "title": "Notifications",
     "no_notifications": "No notifications",
     "number_of_incidents": "Number of incidents"
   },
   "timetable": {
-    "no_data": "",
-    "title": "",
-    "day": "",
-    "correspondence": "",
-    "evening": "",
-    "faculties": "",
-    "specialities": "",
-    "education_form": ""
+    "no_data": "No timetable found",
+    "title": "Timetable",
+    "day": "Daytime",
+    "correspondence": "Correspondence",
+    "evening": "Evening"
   },
   "columns": {
-    "audience": "",
-    "audience_type": "",
-    "class_time": "",
-    "date": "",
-    "group": ""
+    "audience": "Audience",
+    "audience_type": "Audience type",
+    "class_time": "Class time",
+    "date": "Date",
+    "group": "Group"
   },
   "audience_occupancy": {
-    "title": ""
+    "title": "Audience occupancy"
   }
 }

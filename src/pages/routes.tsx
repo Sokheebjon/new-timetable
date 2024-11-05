@@ -6,6 +6,7 @@ import loadable from "@/utils/loadable.tsx";
 const NotFound = loadable(() => import('./NotFound'));
 const Timetable = loadable(() => import('./timetable.tsx'));
 const AudienceOccupancy = loadable(() => import('./audience-occupancy.tsx'));
+const TimetableByGroup = loadable(() => import('./timetable-by-group'));
 
 export const router = createBrowserRouter([
     {
@@ -21,6 +22,10 @@ export const router = createBrowserRouter([
             {
                 path: '/timetable',
                 element: <Timetable/>  ,
+            },
+            {
+                path: '/timetable/:groupId',
+                element: <TimetableByGroup/>  ,
             },
             {
                 path: '/audience-occupancy',
