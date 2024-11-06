@@ -24,8 +24,8 @@ import {useTranslation} from "react-i18next";
 interface TComboboxProps {
     options: { label: string; value: string }[]
     placeholder?: string
-    handleSelect: (value: string) => void
-    value?: string
+    handleSelect: (label: string, value: string) => void
+    value?: string | number
     width?: number | string
     renderLabelTitle?: (option: { [key: string]: any }) => React.ReactNode | string
 }
@@ -61,7 +61,7 @@ export function SearchSelect({options, placeholder, handleSelect, value, renderL
                                     <CommandItem
                                         key={option.value}
                                         value={option.value}
-                                        onSelect={handleSelect}
+                                        onSelect={(label)=> handleSelect(label, option.value)}
                                     >
                                         <Check
                                             className={cn(

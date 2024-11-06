@@ -7,6 +7,7 @@ import {startOfDay} from "date-fns";
 import {useSearchParams} from "react-router-dom";
 import {useTimetableQuery} from "@/hooks/query/useTimetableQuery.ts";
 
+/* eslint-disable  @typescript-eslint/no-explicit-any */
 export default function AudienceOccupancy() {
     const {t} = useTranslation();
     const [searchParams] = useSearchParams();
@@ -25,8 +26,9 @@ export default function AudienceOccupancy() {
         lesson_date_from: startOfDayTimestamp,
         lesson_date_to: startOfDayTimestamp,
     });
+    const timetableList = get(timetableQuery, 'data.data.data', []);
 
-    const lessonPairsList = get(timetableQuery, 'data.data.data', []).reduce(
+    const lessonPairsList = timetableList.reduce(
         (acc: any, item: any) => {
             const hasPairIncluded = acc.some(
                 (pair: { code: string | number }) =>
@@ -35,7 +37,7 @@ export default function AudienceOccupancy() {
             if (hasPairIncluded) {
                 return acc;
             } else {
-                acc.push({ ...item.lessonPair });
+                acc.push({...item.lessonPair});
             }
             return acc;
         },
@@ -57,7 +59,7 @@ export default function AudienceOccupancy() {
             const groupNameByLessonPair = data?.occupiedLessons?.filter((item: {
                 lessonPair: { code: string; };
             }) => item.lessonPair.code === lessonPair.code);
-            return groupNameByLessonPair.length > 0 && <div className="w-full h-full bg-red-50">
+            return groupNameByLessonPair?.length > 0 && <div className="w-full h-full bg-red-50">
                 {groupNameByLessonPair?.map((item: { group: { name: string, id: string } }) => (
                     <p key={item.group.id}>
                         {item.group.name},
@@ -75,7 +77,19 @@ export default function AudienceOccupancy() {
         lesson_date_from: startOfDayTimestamp,
         lesson_date_to: startOfDayTimestamp,
     });
-    const audienceOccupancyList = get(audienceOccupancyQuery, 'data.data.data', []);
+
+    const audienceOccupancyList = get(audienceOccupancyQuery, 'data.data.data.items', []);
+
+    const dataSources = audienceOccupancyList.map((item: { code: number }) => {
+        const occupiedLessons = timetableList.filter((lesson: {
+            auditorium: { code: number }
+        }) => lesson.auditorium.code === item.code);
+        return {
+            ...item,
+            occupiedLessons
+        }
+    });
+
 
     const columns: TColumns<TData>[] = [
         {
@@ -108,7 +122,7 @@ export default function AudienceOccupancy() {
             </div>
 
             <div className="my-6">
-                <AudienceSchedule columns={columns} dataSource={audienceOccupancyList}/>
+                <AudienceSchedule columns={columns} dataSource={dataSources}/>
             </div>
         </>
     )

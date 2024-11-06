@@ -3,7 +3,7 @@ import {
     Select,
     SelectContent,
     SelectGroup,
-    SelectItem, SelectLabel,
+    SelectItem,
     SelectTrigger,
     SelectValue
 } from "@/components/ui/select"
@@ -11,7 +11,7 @@ import {Phone} from "lucide-react"
 import logo from "@/assets/images/logo.svg"
 import {DatePicker} from "@/components/ui/date-picker.tsx";
 import {useTranslation} from "react-i18next";
-import {Link, useLocation, useNavigate, useSearchParams} from "react-router-dom";
+import {Link, useLocation, useNavigate, useParams, useSearchParams} from "react-router-dom";
 import {DEFAULT_LANGUAGE} from "@/utils/constants.ts";
 import {format} from "date-fns";
 import {useBuildingsQuery} from "@/hooks/query/useBuildingsQuery.ts";
@@ -26,7 +26,7 @@ export default function Header() {
     const {pathname} = useLocation();
     const [uiValue, setUiValue] = useState<string>();
     const [searchParams, setSearchParams] = useSearchParams();
-    const [searchSelectValue, setSearchSelectValue] = useState<string>("")
+    const params = useParams()
     const currentSearchParams = Object.fromEntries([...searchParams]);
     const defaultDate = searchParams.get("date") ? new Date(searchParams.get("date") as string) : new Date();
     const defaultBuilding = searchParams.get("building") ?? ""
@@ -37,6 +37,8 @@ export default function Header() {
         label: building.name,
         value: String(building.id)
     })), [buildingsList])
+
+    console.log(params.groupId, "params.groupId")
 
 
     const selectOptions = useMemo(() => [
@@ -109,8 +111,7 @@ export default function Header() {
         setSearchParams({...currentSearchParams, building: value})
     }, [])
 
-    const handleSearchSelect = useCallback((value: string) => {
-        setSearchSelectValue(value)
+    const handleSearchSelect = useCallback((_label: string, value: string) => {
         navigate(`/timetable/${value}`);
     }, [])
 
@@ -173,7 +174,7 @@ export default function Header() {
                                 <SearchSelect
                                     options={sortedGroupOptions}
                                     handleSelect={handleSearchSelect}
-                                    value={searchSelectValue}
+                                    value={Number(params.groupId)}
                                     placeholder={t('select.placeholder.group')}
                                     renderLabelTitle={(option) => option.department?.name}
                                 />

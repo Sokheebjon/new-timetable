@@ -48,7 +48,7 @@ export default function Timetable() {
 
     const timetableQuery = useTimetableQuery({
         limit: 200,
-        _educationForm: educationForm,
+        _education_form: educationForm,
         _faculty: facultyId,
         lesson_date_from: startOfWeekTimestamp,
         lesson_date_to: endOfWeekTimestamp,

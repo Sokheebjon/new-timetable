@@ -9,17 +9,14 @@ export interface TChildren<TChildData> {
 }
 
 export interface TData {
-    name: string
+    name?: string
+    code?: number
     audience?: string
     auditoriumType?: {
         name: string
         code: string
     }
-    financial: string
-    initialEducation: string
-    initialEducation_2: string
-    foreignLanguage: string
-    psychology: string;
+    financial?: string
 }
 
 export interface TColumns<TData> {

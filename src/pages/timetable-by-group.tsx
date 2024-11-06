@@ -35,7 +35,7 @@ export default function TimetableByGroup() {
     const dataSources: any[] = [];
 
     timetableList.forEach((item: any) => {
-        const index = dataSources.findIndex((data) => data.date === item.lesson_date);
+        const index = dataSources.findIndex((data) => data.lesson_date === item.lesson_date);
         if (index === -1) {
             dataSources.push({
                 lesson_date: item.lesson_date,
@@ -48,7 +48,6 @@ export default function TimetableByGroup() {
         } else {
             dataSources[index] = {
                 ...dataSources[index],
-                lesson_date: item.lesson_date,
                 [item.lessonPair.code]: {
                     subject: item.subject?.name,
                     teacher: item.employee?.name,
@@ -57,7 +56,6 @@ export default function TimetableByGroup() {
             }
         }
     });
-
 
     const lessonPairsColumns = timetableList.reduce((acc: any, item: any) => {
         const hasPairIncluded = acc.some(
